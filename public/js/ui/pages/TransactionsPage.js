@@ -11,14 +11,18 @@ class TransactionsPage {
    * через registerEvents()
    * */
   constructor( element ) {
-
+    if (!element) {
+      throw new Error('Отсутствует element');
+    }
+    this.element = element;
+    this.registerEvents();
   }
 
   /**
    * Вызывает метод render для отрисовки страницы
    * */
   update() {
-
+    this.render(this.lastOptions);
   }
 
   /**
@@ -28,7 +32,15 @@ class TransactionsPage {
    * TransactionsPage.removeAccount соответственно
    * */
   registerEvents() {
+    this.element.addEventListener('click', (event) => {
+      if (event.target.classList.contains('remove-account') || event.target.closest('.remove-account')) {
+        this.removeAccount();
+      }
 
+      if (event.target.classList.contains('transaction__remove') || event.target.closest('.transaction__remove')) {
+        this.removeTransaction(event.target.dataset.id);
+      }
+    })
   }
 
   /**
@@ -41,7 +53,17 @@ class TransactionsPage {
    * для обновления приложения
    * */
   removeAccount() {
-
+    if (this.lastOptions) {
+      if (window.confirm('Вы действительно хотите удалить счёт?')) {
+        Account.remove({ id: this.lastOptions.account_id }, (err, response) => {
+          if (response.success) {
+            App.updateWidgets();
+            App.updateForms();
+          }
+        });
+        this.clear();
+      }
+    }
   }
 
   /**
@@ -51,8 +73,15 @@ class TransactionsPage {
    * либо обновляйте текущую страницу (метод update) и виджет со счетами
    * */
   removeTransaction( id ) {
-
-  }
+    if (window.confirm('Вы действительно хотите удалить эту транзакцию?')) {
+      Transaction.remove({ id }, (err, response) => {
+        console.log(response);
+        if (response.success) {
+          App.update();
+        }
+      });
+    }
+    }
 
   /**
    * С помощью Account.get() получает название счёта и отображает
@@ -61,7 +90,19 @@ class TransactionsPage {
    * в TransactionsPage.renderTransactions()
    * */
   render(options){
-
+    if (options) {
+      this.lastOptions = options;
+      Account.get(options.account_id, (err, response) => {
+        if (response.success) {
+          this.renderTitle(response.data.name);
+        }
+      });
+      Transaction.list(options, (err,response) => {
+        if (response.success) {
+          this.renderTransactions(response.data);
+        }
+      });
+    }
   }
 
   /**
@@ -70,14 +111,19 @@ class TransactionsPage {
    * Устанавливает заголовок: «Название счёта»
    * */
   clear() {
-
+    this.renderTransactions([]);
+    this.renderTitle('Название счёта');
+    this.lastOptions = null;
   }
 
   /**
    * Устанавливает заголовок в элемент .content-title
    * */
   renderTitle(name){
-
+    if (name) {
+      const contentTitle = document.querySelector('.content-title');
+      contentTitle.textContent = name;
+    }
   }
 
   /**
@@ -85,7 +131,15 @@ class TransactionsPage {
    * в формат «10 марта 2019 г. в 03:20»
    * */
   formatDate(date){
+    let dateArr = date.split('T')[0];
+    let timeArr = date.split('T')[1];
+    dateArr = dateArr.split('-');
+    timeArr = timeArr.split(':');
+    const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 
+    const dateString = `${dateArr[2]} ${months[dateArr[1] - 1]} ${dateArr[0]} г. в ${timeArr[0]}:${timeArr[1]}`;
+    
+    return dateString;
   }
 
   /**
@@ -93,7 +147,72 @@ class TransactionsPage {
    * item - объект с информацией о транзакции
    * */
   getTransactionHTML(item){
+    const transaction = document.createElement('div');
+    transaction.classList.add('transaction', 'row');
+    if (item.type === 'expense') {
+      transaction.classList.add('transaction_expense');
+    } else if (item.type === 'income') {
+      transaction.classList.add('transaction_income');
+    }
 
+    const colMd = document.createElement("div");
+    colMd.classList.add('col-md-7','transaction__details');
+
+    const transactionIcon = document.createElement('div');
+    transactionIcon.classList.add('transaction__icon');
+
+    const faFoney = document.createElement('span');
+    faFoney.classList.add('fa', 'fa-money', 'fa-2x');
+    transactionIcon.insertAdjacentElement('beforeend', faFoney);
+
+    colMd.insertAdjacentElement('beforeend', transactionIcon);
+
+    const transactionInfo = document.createElement('div');
+    transactionInfo.classList.add('transaction__info');
+
+    const transactionTitle = document.createElement('h4');
+    transactionTitle.classList.add('transaction__title');
+    transactionTitle.textContent = item.name;
+
+    const transactionDate = document.createElement('div');
+    transactionDate.classList.add('transaction__date');
+    transactionDate.textContent = this.formatDate(item.created_at);
+
+    transactionInfo.insertAdjacentElement('beforeend', transactionTitle);
+    transactionInfo.insertAdjacentElement('beforeend', transactionDate);
+
+    colMd.insertAdjacentElement('beforeend', transactionInfo);
+
+    const colMd3 = document.createElement('div');
+    colMd3.classList.add('col-md-3');
+
+    const transactionSumm = document.createElement('div');
+    transactionSumm.classList.add('transaction__summ');
+    transactionSumm.textContent = item.sum;
+
+    const currency = document.createElement('span');
+    currency.classList.add('currency');
+    currency.textContent = '₽';
+
+    transactionSumm.insertAdjacentElement('beforeend', currency);
+    colMd3.insertAdjacentElement('beforeend', transactionSumm);
+
+    const colMd2 = document.createElement('div');
+    colMd2.classList.add('col-md-2', 'transaction__controls');
+
+    const button = document.createElement('button');
+    button.classList.add('btn','btn-danger','transaction__remove');
+    button.dataset.id = item.id;
+
+    const i = document.createElement('i');
+    i.classList.add('fa','fa-trash');
+    button.insertAdjacentElement('beforeend', i);
+    colMd2.insertAdjacentElement('beforeend', button);
+
+    transaction.insertAdjacentElement('beforeend', colMd);
+    transaction.insertAdjacentElement('beforeend',colMd3);
+    transaction.insertAdjacentElement('beforeend',colMd2);
+    return transaction;
   }
 
   /**
@@ -101,6 +220,12 @@ class TransactionsPage {
    * используя getTransactionHTML
    * */
   renderTransactions(data){
+    const content = this.element.querySelector('.content');
+    content.innerHTML = '';
+    data.forEach(item => {
+      
+      content.insertAdjacentElement('beforeend', this.getTransactionHTML(item));
+    })
 
   }
 }
