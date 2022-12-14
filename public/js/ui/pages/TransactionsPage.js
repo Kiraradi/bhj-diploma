@@ -131,10 +131,14 @@ class TransactionsPage {
    * в формат «10 марта 2019 г. в 03:20»
    * */
   formatDate(date){
-    date = new Date(date);
-    const dateString = date.toLocaleDateString('ru-RU', { year: "numeric", month: "long", day: "numeric" });
-    const time = date.toLocaleTimeString('ru-RU', { hour: "numeric", minute: "numeric" });
-    return `${dateString} в ${time}`;
+    if (date) {
+      date = new Date(date);
+      const dateString = date.toLocaleDateString('ru-RU', { year: "numeric", month: "long", day: "numeric" });
+      const time = date.toLocaleTimeString('ru-RU', { hour: "numeric", minute: "numeric" });
+      return `${dateString} в ${time}`;
+    } else {
+      return "Время уточняется";
+    }
   }
 
   /**
