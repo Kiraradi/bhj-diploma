@@ -102,6 +102,11 @@
       "name": "Oko",
       "user_id": "1fapf28cslbbv4l0c",
       "id": "1fapf2dv0lbbz52h2"
+    },
+    {
+      "name": "На велик ",
+      "user_id": "99xgj20wlbawue35",
+      "id": "1fapf2db8lbko32fh"
     }
   ],
   "transactions": [
@@ -239,6 +244,24 @@
       "sum": 300000,
       "type": "expense",
       "user_id": "1"
+    },
+    {
+      "id": "1fapf29gslbko3hu4",
+      "type": "income",
+      "name": "Работа ",
+      "sum": 8000,
+      "account_id": "1fapf2db8lbko32fh",
+      "user_id": "99xgj20wlbawue35",
+      "created_at": "2022-12-12T10:44:09.099Z"
+    },
+    {
+      "id": "1fapf2598lbko3qtq",
+      "type": "expense",
+      "name": "Еда ",
+      "sum": 2000,
+      "account_id": "1fapf2db8lbko32fh",
+      "user_id": "99xgj20wlbawue35",
+      "created_at": "2022-12-12T10:44:20.749Z"
     }
   ]
 }
