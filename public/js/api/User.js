@@ -10,6 +10,7 @@ class User {
    * */
   static URL = '/user';
   static setCurrent(user) {
+    console.log(user);
     localStorage.setItem('user', JSON.stringify(user));
   }
 
@@ -86,7 +87,7 @@ class User {
         data: data,
         method:'POST',
         callback:(err, response) => {
-          if (response && !response.success) {
+          if (response && response.success) {
             this.setCurrent(response.user)
           }
           callback(err, response);

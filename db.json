@@ -80,6 +80,12 @@
       "email": "ccc@demo.ru",
       "password": "demo",
       "id": "1fapf25c0lbetgxf5"
+    },
+    {
+      "name": "Кот",
+      "email": "cat@demo.ru",
+      "password": "demo",
+      "id": "3c623rglbs6agy8"
     }
   ],
   "accounts": [
@@ -107,6 +113,11 @@
       "name": "На велик ",
       "user_id": "99xgj20wlbawue35",
       "id": "1fapf2db8lbko32fh"
+    },
+    {
+      "name": "Игрушки ",
+      "user_id": "3c623rglbs6agy8",
+      "id": "3c62994lbs71k2w"
     }
   ],
   "transactions": [
@@ -262,6 +273,15 @@
       "account_id": "1fapf2db8lbko32fh",
       "user_id": "99xgj20wlbawue35",
       "created_at": "2022-12-12T10:44:20.749Z"
+    },
+    {
+      "id": "3c62878lbs71vc8",
+      "type": "income",
+      "name": "Мурчала ",
+      "sum": 5000,
+      "account_id": "3c62994lbs71k2w",
+      "user_id": "3c623rglbs6agy8",
+      "created_at": "2022-12-17T17:09:09.223Z"
     }
   ]
 }

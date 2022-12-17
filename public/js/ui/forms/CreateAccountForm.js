@@ -10,7 +10,6 @@ class CreateAccountForm extends AsyncForm {
    * */
   onSubmit(data) {
     Account.create(data,(err, response) => {
-      console.log(response);
       if (response.success) {
         App.modals.createAccount
         const modal = new Modal(this.element.closest('.modal'));

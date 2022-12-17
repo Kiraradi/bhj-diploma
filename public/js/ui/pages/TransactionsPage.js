@@ -37,9 +37,15 @@ class TransactionsPage {
         this.removeAccount();
       }
 
-      if (event.target.classList.contains('transaction__remove') || event.target.closest('.transaction__remove')) {
-        this.removeTransaction(event.target.dataset.id);
+      let elementParent = event.target;
+
+      if ( elementParent.closest('.transaction__remove') ) {
+        elementParent = elementParent.closest('.transaction__remove');
       }
+
+      if ( elementParent.classList.contains('transaction__remove') ) {
+        this.removeTransaction(elementParent.dataset.id);
+      } 
     })
   }
 
@@ -75,7 +81,6 @@ class TransactionsPage {
   removeTransaction( id ) {
     if (window.confirm('Вы действительно хотите удалить эту транзакцию?')) {
       Transaction.remove({ id }, (err, response) => {
-        console.log(response);
         if (response.success) {
           App.update();
         }
